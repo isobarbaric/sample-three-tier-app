@@ -1,35 +1,106 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useState, useEffect } from 'react'
 import './App.css'
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+
+interface Todo {
+  id: number
+  title: string
+  description?: string
+  completed: boolean
+  created_at: string
+}
+
 function App() {
-  const [count, setCount] = useState(0)
+  const [todos, setTodos] = useState<Todo[]>([])
+  const [title, setTitle] = useState('')
+  const [description, setDescription] = useState('')
+
+  useEffect(() => {
+    fetch(`${API_URL}/api/todos`).then(r => r.json()).then(setTodos)
+  }, [])
+
+  const addTodo = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!title.trim()) return
+
+    const res = await fetch(`${API_URL}/api/todos`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title, description: description || null }),
+    })
+    const newTodo = await res.json()
+    setTodos([...todos, newTodo])
+    setTitle('')
+    setDescription('')
+  }
+
+  const toggleTodo = async (todo: Todo) => {
+    const res = await fetch(`${API_URL}/api/todos/${todo.id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ completed: !todo.completed }),
+    })
+    const updated = await res.json()
+    setTodos(todos.map(t => t.id === todo.id ? updated : t))
+  }
+
+  const deleteTodo = async (id: number) => {
+    await fetch(`${API_URL}/api/todos/${id}`, { method: 'DELETE' })
+    setTodos(todos.filter(t => t.id !== id))
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="app">
+      <div className="container">
+        <header>
+          <h1>📝 Todo App</h1>
+        </header>
+
+        <form onSubmit={addTodo} className="todo-form">
+          <input
+            type="text"
+            placeholder="What needs to be done?"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="input-title"
+          />
+          <input
+            type="text"
+            placeholder="Description (optional)"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            className="input-description"
+          />
+          <button type="submit" disabled={!title.trim()}>
+            Add Todo
+          </button>
+        </form>
+
+        {todos.length === 0 ? (
+          <div className="empty">No todos yet!</div>
+        ) : (
+          <div className="todo-list">
+            {todos.map((todo) => (
+              <div key={todo.id} className={`todo-item ${todo.completed ? 'completed' : ''}`}>
+                <input
+                  type="checkbox"
+                  checked={todo.completed}
+                  onChange={() => toggleTodo(todo)}
+                />
+                <div className="todo-text">
+                  <h3>{todo.title}</h3>
+                  {todo.description && <p>{todo.description}</p>}
+                </div>
+                <button onClick={() => deleteTodo(todo.id)}>Delete</button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    </div>
   )
 }
 
 export default App
+
