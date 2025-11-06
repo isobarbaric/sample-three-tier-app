@@ -1,4 +1,4 @@
-# TODO: provide status update when each of these is being down
+# TODO: each of these steps should be displayed distinctly in the MCP tool (esp the terminal commands for docker build)
 # TODO: review system design with Andrew tmrw
 import subprocess
 from pathlib import Path
@@ -7,7 +7,7 @@ from typing import Dict, Optional
 import boto3
 from botocore.exceptions import ClientError
 
-# TODO: set up .env for these
+# TODO: set up .env for these?
 PROFILE_NAME = "automate-deployment"
 REGION_NAME = "us-east-2"
 BUCKET_NAME = "three-tier-dockerfiles"
@@ -134,12 +134,10 @@ def build_images() -> None:
             build_cmd = [
                 "docker",
                 "build",
-                "-f",
-                str(dockerfile),
-                "-t",
-                local_tag,
-                "-t",
-                tag,
+                "--platform", "linux/amd64",
+                "-f", str(dockerfile),
+                "-t", local_tag,
+                "-t", tag,
                 str(context),
             ]
             subprocess.run(

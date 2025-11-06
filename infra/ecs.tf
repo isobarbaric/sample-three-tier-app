@@ -6,6 +6,7 @@ resource "aws_ecs_cluster" "main" {
   }
 }
 
+# TODO: set up log group
 resource "aws_ecs_task_definition" "frontend" {
   family                   = "three-tier-app-frontend"
   network_mode             = "awsvpc"
@@ -19,7 +20,7 @@ resource "aws_ecs_task_definition" "frontend" {
     image = "${var.ecr_registry}/frontend:latest"
     
     portMappings = [{
-      containerPort = 3000
+      containerPort = 80
       protocol      = "tcp"
     }]
 
