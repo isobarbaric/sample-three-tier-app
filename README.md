@@ -1,5 +1,5 @@
-# automated-infra-deployment
+# sample-three-tier-app
 
-- ecs service for frontend
-- ecs service for backend
-- setup postgres database & deploy to rds
+- `frontend/` dir
+- `backend/` dir (`migrations/` dir inside)
+  
