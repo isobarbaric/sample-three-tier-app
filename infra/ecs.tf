@@ -82,6 +82,11 @@ resource "aws_ecs_task_definition" "backend" {
       protocol      = "tcp"
     }]
 
+    environment = [{
+      name  = "DATABASE_URL"
+      value = "sqlite+aiosqlite:///./todos.db"
+    }]
+
     logConfiguration = {
       logDriver = "awslogs"
       options = {
