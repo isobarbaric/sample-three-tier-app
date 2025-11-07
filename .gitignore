@@ -49,6 +49,4 @@ Thumbs.db
 .env
 .env.local
 
-# temporary changes
 infra/
-deploy.py
