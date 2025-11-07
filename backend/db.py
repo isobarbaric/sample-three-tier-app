@@ -7,8 +7,9 @@ from models import Base, Todo
 
 MIGRATIONS_DIR = Path(__file__).parent / "migrations"
 
-# Database URL must be provided by infrastructure layer
-DATABASE_URL = os.environ["DATABASE_URL"]
+# Database URL - defaults to SQLite for local development
+# Infrastructure layer should override this with environment variable
+DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite+aiosqlite:///./todos.db")
 
 # Create async engine
 engine = create_async_engine(
