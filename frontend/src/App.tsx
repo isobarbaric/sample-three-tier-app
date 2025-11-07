@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react'
 import './App.css'
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+// Use empty string for production (same domain), fallback to localhost for local dev
+const API_URL = import.meta.env.VITE_API_URL !== undefined 
+  ? import.meta.env.VITE_API_URL 
+  : 'http://localhost:8000'
 
 interface Todo {
   id: number

@@ -23,6 +23,11 @@ build/
 venv/
 ENV/
 
+# SQLite databases
+*.db
+*.sqlite
+*.sqlite3
+
 # Node
 node_modules/
 npm-debug.log*
@@ -44,3 +49,6 @@ Thumbs.db
 .env
 .env.local
 
+# temporary changes
+infra/
+deploy.py
